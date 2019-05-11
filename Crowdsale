@@ -1,7 +1,8 @@
-pragma solidity ^0.4.16;
+pragma solidity >=0.4.0 <0.6.0;
+
 
 interface ChadCoin {
-    function transfer(address receiver, uint amount);
+   function transfer (address receiver, uint amount) external;
 }
 
 contract Crowdsale {
@@ -44,7 +45,7 @@ contract Crowdsale {
      *
      * Default function which gets called when someone sends money to the contract. Will be used for joining sale.
      */
-    function () payable {
+    function () external payable {
         require(!crowdSaleClosed);
         uint amount = msg.value;
         balanceOf[msg.sender] += amount;
@@ -65,7 +66,7 @@ contract Crowdsale {
      * Check if the funding goal was reached. Will only be checked if afterDeadline modifier above is true.
      *
      */
-    function checkGoalReached() afterDeadline {
+    function checkGoalReached() public afterDeadline {
         if(totalAmountRaised >= fundingGoal){
             fundingGoalReached = true;
         }
@@ -79,7 +80,7 @@ contract Crowdsale {
      * Will withdraw the money after the deadline has been reached. If the goal was reached, only the owner can withdraw money to the beneficiary account.
      * If you goal was not reached, everyone who participated can withdraw their share.
      */
-    function safeWithdrawal() afterDeadline {
+    function safeWithdrawal() public afterDeadline {
         if(!fundingGoalReached){
             uint amount = balanceOf[msg.sender];
             balanceOf[msg.sender] = 0;
@@ -90,7 +91,7 @@ contract Crowdsale {
             }
         }
         if(fundingGoalReached && msg.sender == beneficiary){
-            if(!beneficiary.send(totalAmountRaised)){
+            if(!msg.sender.send(totalAmountRaised)){
                 fundingGoalReached = false;
             }
         }
