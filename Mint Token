@@ -1,11 +1,20 @@
-pragma solidity ^0.4.24;
+
+pragma solidity >=0.4.22 <0.6.0;
+
 
 // ----------------------------------------------------------------------------
-// 'Chadcoin' token contract
-// Symbol      : CHAD
-// Name        : Chadcoin
-// Total supply: 100000000
+// 'Chad Coin' token contract
+//
+// Deployed to : 0x5A86f0cafD4ef3ba4f0344C138afcC84bd1ED222
+// Symbol      : Chad
+// Name        : Chad Coin
+// Total supply: 1000
 // Decimals    : 18
+//
+// Enjoy.
+//
+// Contract orginally created by Moritz Neto with BokkyPooBah for pragam version 4.0^
+// Updated and refinied for Solidity pragama 5.0^ by Cchadwwick
 // ----------------------------------------------------------------------------
 
 
@@ -37,9 +46,9 @@ contract SafeMath {
 // https://github.com/ethereum/EIPs/blob/master/EIPS/eip-20-token-standard.md
 // ----------------------------------------------------------------------------
 contract ERC20Interface {
-    function totalSupply() public constant returns (uint);
-    function balanceOf(address tokenOwner) public constant returns (uint balance);
-    function allowance(address tokenOwner, address spender) public constant returns (uint remaining);
+    function totalSupply() public view returns (uint);
+    function balanceOf(address tokenOwner) public view returns (uint balance);
+    function allowance(address tokenOwner, address spender) public view returns (uint remaining);
     function transfer(address to, uint tokens) public returns (bool success);
     function approve(address spender, uint tokens) public returns (bool success);
     function transferFrom(address from, address to, uint tokens) public returns (bool success);
@@ -55,7 +64,7 @@ contract ERC20Interface {
 // Borrowed from MiniMeToken
 // ----------------------------------------------------------------------------
 contract ApproveAndCallFallBack {
-    function receiveApproval(address from, uint256 tokens, address token, bytes data) public;
+    function receiveApproval(address from, uint256 tokens, address token, bytes memory data) public;
 }
 
 
@@ -68,7 +77,7 @@ contract Owned {
 
     event OwnershipTransferred(address indexed _from, address indexed _to);
 
-    constructor() public {
+    constructor() public payable {
         owner = msg.sender;
     }
 
@@ -80,6 +89,7 @@ contract Owned {
     function transferOwnership(address _newOwner) public onlyOwner {
         newOwner = _newOwner;
     }
+    
     function acceptOwnership() public {
         require(msg.sender == newOwner);
         emit OwnershipTransferred(owner, newOwner);
@@ -110,16 +120,16 @@ contract Chadcoin is ERC20Interface, Owned, SafeMath {
         symbol = "CHAD";
         name = "Chadcoin";
         decimals = 18;
-        _totalSupply = 100000000000000000000;
-        balances[0xca35b7d915458ef540ade6068dfe2f44e8fa733c] = _totalSupply;
-        emit Transfer(address(0), 0xca35b7d915458ef540ade6068dfe2f44e8fa733c, _totalSupply);
+        _totalSupply = 10000;
+        balances[0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c] = _totalSupply;
+        emit Transfer(address(0), 0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c, _totalSupply);
     }
 
 
     // ------------------------------------------------------------------------
     // Total supply
     // ------------------------------------------------------------------------
-    function totalSupply() public constant returns (uint) {
+    function totalSupply() public view returns (uint) {
         return _totalSupply  - balances[address(0)];
     }
 
@@ -127,13 +137,13 @@ contract Chadcoin is ERC20Interface, Owned, SafeMath {
     // ------------------------------------------------------------------------
     // Get the token balance for account tokenOwner
     // ------------------------------------------------------------------------
-    function balanceOf(address tokenOwner) public constant returns (uint balance) {
+    function balanceOf(address tokenOwner) public view returns (uint balance) {
         return balances[tokenOwner];
     }
 
 
     // ------------------------------------------------------------------------
-    // Transfer the balance from token owner's account to to account
+    // Transfer the balance from token owner's account to account
     // - Owner's account must have sufficient balance to transfer
     // - 0 value transfers are allowed
     // ------------------------------------------------------------------------
@@ -182,7 +192,7 @@ contract Chadcoin is ERC20Interface, Owned, SafeMath {
     // Returns the amount of tokens approved by the owner that can be
     // transferred to the spender's account
     // ------------------------------------------------------------------------
-    function allowance(address tokenOwner, address spender) public constant returns (uint remaining) {
+    function allowance(address tokenOwner, address spender) public view returns (uint remaining) {
         return allowed[tokenOwner][spender];
     }
 
@@ -192,10 +202,10 @@ contract Chadcoin is ERC20Interface, Owned, SafeMath {
     // from the token owner's account. The spender contract function
     // receiveApproval(...) is then executed
     // ------------------------------------------------------------------------
-    function approveAndCall(address spender, uint tokens, bytes data) public returns (bool success) {
+    function approveAndCall(address spender, uint tokens, bytes memory data) public returns (bool success) {
         allowed[msg.sender][spender] = tokens;
         emit Approval(msg.sender, spender, tokens);
-        ApproveAndCallFallBack(spender).receiveApproval(msg.sender, tokens, this, data);
+        ApproveAndCallFallBack(spender).receiveApproval(msg.sender, tokens, 0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c, data);
         return true;
     }
 
@@ -203,7 +213,7 @@ contract Chadcoin is ERC20Interface, Owned, SafeMath {
     // ------------------------------------------------------------------------
     // Don't accept ETH
     // ------------------------------------------------------------------------
-    function () public payable {
+    function () external payable {
         revert();
     }
 
