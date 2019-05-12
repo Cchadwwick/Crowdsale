@@ -22,5 +22,5 @@ At this point, sent coins should be under CrowdSale contract and ready for distr
 
 
 ///////INTERACTING WITH CROWDSALE////////////////////
-1. Under Remix - Solidity IDE, choose desired address
+1. Under Remix - Solidity IDE, go to 'Crowdsale' Contract and choose desired address to use
 2. Select amount of ether you want trade for 'Chad Coin' and click (fallback) function
